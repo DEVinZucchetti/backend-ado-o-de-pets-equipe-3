@@ -44,13 +44,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('logout', [AuthController::class, 'logout']);
 
-
     Route::get('pets/perfil', [PetsReportController::class, 'showPerfil']);
 });
 
 
+Route::get('adoptions', [AdoptionController::class, 'getAdoptions']);
 
 Route::get('pets/adocao', [AdoptionController::class, 'index']);
-Route::get('pets/{id}', [AdoptionController::class, 'show']);
+Route::get('pets/{id}/adocao', [AdoptionController::class, 'show']);
 Route::post('login', [AuthController::class, 'store']);
+Route::post('pets/adocao', [AdoptionController::class, 'store']);
 Route::post('users', [UserController::class, 'store']);
