@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SendWelcomePet;
+use App\Models\Adoption;
 use App\Models\Client;
 use App\Models\People;
 use App\Models\Pet;
@@ -77,5 +78,26 @@ class AdoptionController extends Controller
         if (!$pet) return $this->error('Dado não encontrado', Response::HTTP_NOT_FOUND);
 
         return $pet;
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            $data = $request->all(); // pegar o body
+
+            $request->validate([
+                'name' => 'string|required|max:255',
+                'contact' => 'string|required|max:20',
+                'email' => 'string|required',
+                'cpf' => 'string|required',
+                'observations' => 'string|required',
+                'pet_id' => 'integer|required',
+            ]); // valida os dados
+
+            $adoption = Adoption::create([...$data, 'status' => 'PENDENTE']);
+            return $adoption;
+        } catch (\Exception $exception) {
+            return $this->error($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
     }
 }
