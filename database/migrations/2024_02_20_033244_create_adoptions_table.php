@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('pet_id');
             $table->string('name');
             $table->string('email');
-            $table->string('CPF');
+            $table->string('cpf');
             $table->string('contact',20);
             $table->string('observations');
             $table->enum('status',['PENDENTE','NEGADO','APROVADO']);
