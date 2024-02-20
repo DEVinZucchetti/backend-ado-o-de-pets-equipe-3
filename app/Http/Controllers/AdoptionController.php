@@ -100,4 +100,11 @@ class AdoptionController extends Controller
             return $this->error($exception->getMessage(), Response::HTTP_BAD_REQUEST);
         }
     }
+
+    // listar adopcoes
+    public function getAdoptions()
+    {
+        $adoptions = Adoption::query()->with('pet')->get();
+        return $adoptions;
+    }
 }

@@ -51,6 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::get('pets/perfil', [PetsReportController::class, 'showPerfil']);
+
+    Route::get('adoptions', [AdoptionController::class, 'getAdoptions']);
 });
 
 
