@@ -53,10 +53,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('pets/perfil', [PetsReportController::class, 'showPerfil']);
 
     Route::get('adoptions', [AdoptionController::class, 'getAdoptions']);
+    Route::post('adoptions/realized', [AdoptionController::class, 'approve']);
 });
 
 
 Route::post('users', [UserController::class, 'store']);
+
+Route::post('upload', [PetController::class, 'upload']);
 
 
 
