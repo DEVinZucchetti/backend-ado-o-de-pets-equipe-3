@@ -59,7 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('users', [UserController::class, 'store']);
 
-Route::post('upload', [PetController::class, 'upload']);
+Route::post('upload', [AdoptionController::class, 'upload']);
 
 
 
