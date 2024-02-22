@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
+use App\Mail\SendDocuments;
 
 class AdoptionController extends Controller
 {
@@ -146,6 +147,12 @@ class AdoptionController extends Controller
         $pet = Pet::find($adoption->pet_id);
         $pet->update(['client_id' => $client->id]);
         $pet->save();
+
+
+        Mail::to($people->email, $people->name)
+            ->send(new SendDocuments($people->name));
+
+    
 
         return $client;
     }

@@ -40,7 +40,7 @@ class SendDocuments extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.sendDocuments',
+            view: 'mails.sendDocuments',
         );
     }
 
