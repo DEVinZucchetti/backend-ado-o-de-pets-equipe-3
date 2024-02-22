@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use App\Mail\SendDocuments;
 use App\Models\SolicitationDocument;
+use Illuminate\Support\Facades\DB;
 
 class AdoptionController extends Controller
 {
@@ -116,51 +117,60 @@ class AdoptionController extends Controller
     // aprova adocao
     public function approve(Request $request)
     {
-        // Atualiza o status da adoção para aprovado
-        $data = $request->all();
 
-        $request->validate([
-            'adoption_id' => 'integer|required',
-        ]);
+        try {
 
-        $adoption = Adoption::find($data['adoption_id']);
+            DB::beginTransaction();
 
-        if (!$adoption)  return $this->error('Dado não encontrado', Response::HTTP_NOT_FOUND);
+            // Atualiza o status da adoção para aprovado
+            $data = $request->all();
 
-        $adoption->update(['status' => 'APROVADO']);
-        $adoption->save();
+            $request->validate([
+                'adoption_id' => 'integer|required',
+            ]);
 
-        // efetivo o cadastro da pessoa que tem intenção de adotar no sistema
-        $people = People::create([
-            'name' => $adoption->name,
-            'email' => $adoption->email,
-            'cpf' => $adoption->cpf,
-            'contact' => $adoption->contact,
-        ]);
+            $adoption = Adoption::find($data['adoption_id']);
 
-        $client = Client::create([
-            'people_id' => $people->id,
-            'bonus' => true
-        ]);
+            if (!$adoption)  return $this->error('Dado não encontrado', Response::HTTP_NOT_FOUND);
 
-         // vincula o pet com cliente criado
+            $adoption->update(['status' => 'APROVADO']);
+            $adoption->save();
 
-        $pet = Pet::find($adoption->pet_id);
-        $pet->update(['client_id' => $client->id]);
-        $pet->save();
+            // efetivo o cadastro da pessoa que tem intenção de adotar no sistema
+            $people = People::create([
+                'name' => $adoption->name,
+                'email' => $adoption->email,
+                'cpf' => $adoption->cpf,
+                'contact' => $adoption->contact,
+            ]);
 
-        $solicitation = SolicitationDocument::create([
-            'client_id' => $client->id
-        ]);
+            $client = Client::create([
+                'people_id' => $people->id,
+                'bonus' => true
+            ]);
 
+            // vincula o pet com cliente criado
 
-        Mail::to($people->email, $people->name)
-            ->send(new SendDocuments($people->name));
+            $pet = Pet::find($adoption->pet_id);
+            $pet->update(['client_id' => $client->id]);
+            $pet->save();
 
-    
+            $solicitation = SolicitationDocument::create([
+                'client_id' => $client->id
+            ]);
 
-        return $client;
+            Mail::to($people->email, $people->name)
+                ->send(new SendDocuments($people->name, $solicitation->id));
+
+            DB::commit();
+
+            return $client;
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return $this->error($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
     }
+
 
     
     public function upload(Request $request)
