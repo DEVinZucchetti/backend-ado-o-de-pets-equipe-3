@@ -174,31 +174,40 @@ class AdoptionController extends Controller
 
     
     public function upload(Request $request)
-	    {
-	
+    {
 
-	       $file = $request->file('file');
-	        $description =  $request->input('description');
 
-	        $slugName = Str::of($description)->slug();
-	        $fileName = $slugName . '.' . $file->extension();
+        $file = $request->file('file');
+        $description =  $request->input('description');
+        $key =  $request->input('key');
+        $id =  $request->input('id');
 
-	        $pathBucket = Storage::disk('s3')->put('documentos', $file);
+        /* criar nome amigável arquivo */
+        $slugName = Str::of($description)->slug();
+        $fileName = $slugName . '.' . $file->extension();
 
-	        $fullPathFile = Storage::disk('s3')->url($pathBucket);
+        /* Enviar o arquivo para amazon */
 
-	        $fileCreated = File::create(
-	            [
-	                'name' => $fileName,
-	                'size' => $file->getSize(),
-	                'mime' => $file->extension(),
-	                'url' => $fullPathFile
-	            ]
-	        );
-	        
-	        return ['message'=> 'Arquivo criado com sucesso'];
-            
-	    }
+        $pathBucket = Storage::disk('s3')->put('documentos', $file);
+        $fullPathFile = Storage::disk('s3')->url($pathBucket);
+
+        $file = File::create(
+            [
+                'name' => $fileName,
+                'size' => $file->getSize(),
+                'mime' => $file->extension(),
+                'url' => $fullPathFile
+            ]
+        );
+
+        $solicitation = SolicitationDocument::find($id);
+
+        if(!$solicitation) return $this->error('Dado não encontrado', Response::HTTP_NOT_FOUND);
+
+        $solicitation->update([$key => $file->id]);
+
+        return ['message' => 'Arquivo criado com sucesso'];
+    }
 
 
 }
