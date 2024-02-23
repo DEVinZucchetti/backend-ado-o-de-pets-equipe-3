@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\SendWelcomePet;
+use App\Mail\SendDocuments;
 use App\Models\Adoption;
 use App\Models\Client;
 use App\Models\File;
 use App\Models\People;
 use App\Models\Pet;
+use App\Models\SolicitationDocument;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+
 use Symfony\Component\HttpFoundation\Response;
-use App\Mail\SendDocuments;
-use App\Models\SolicitationDocument;
-use Illuminate\Support\Facades\DB;
 
 class AdoptionController extends Controller
 {
@@ -34,17 +34,9 @@ class AdoptionController extends Controller
                 ->select(
                     'id',
                     'pets.name as pet_name',
-                    'pets.race_id',
-                    'pets.specie_id',
-                    'pets.size as size',
-                    'pets.weight as weight',
                     'pets.age as age'
                 )
                 #->with('race') // traz todas as colunas
-                ->with(['race' => function ($query) {
-                    $query->select('name', 'id');
-                }])
-                ->with('specie')
                 ->where('client_id', null);
 
 
@@ -107,14 +99,12 @@ class AdoptionController extends Controller
         }
     }
 
-    // listar adopcoes
     public function getAdoptions()
     {
         $adoptions = Adoption::query()->with('pet')->get();
         return $adoptions;
     }
-    
-    // aprova adocao
+
     public function approve(Request $request)
     {
 
@@ -171,8 +161,6 @@ class AdoptionController extends Controller
         }
     }
 
-
-    
     public function upload(Request $request)
     {
 
@@ -208,6 +196,4 @@ class AdoptionController extends Controller
 
         return ['message' => 'Arquivo criado com sucesso'];
     }
-
-
 }
