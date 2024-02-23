@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Database\Seeders\Profiles;
 use Database\Seeders\InitialUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -67,6 +68,41 @@ class UserTest extends TestCase
             ],
         ]);      
     }
+
+     //testo permisos de veterinario
+     public function test_user_veterinary_permissions_load_correct()
+     {
+ 
+         $this->seed(Profiles::class);
+         $this->seed(InitialUser::class);
+
+        $user = User::factory()->create(['profile_id' => 2 , 'password'=> '12345678']);
+ 
+         $response = $this->post('/api/login',[
+             'email' => $user->email,
+             'password' => '12345678'
+         ]);
+ 
+         $response->assertStatus(201);
+ 
+         $response->assertJson([
+             "data"=> [
+                 "permissions"=>[
+                    'create-races',
+                    'get-races',
+                    'create-species',
+                    'get-species',
+                    'delete-species',
+                    'create-pets',
+                    'get-pets',
+                    'delete-pets',
+                    'create-vaccines'
+                ]
+             ],
+         ]);      
+     }
+
+      
 
 
 }
