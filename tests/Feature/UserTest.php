@@ -102,7 +102,28 @@ class UserTest extends TestCase
          ]);      
      }
 
-      
+      //testo email y password errado
+      public function test_email_correct()
+      {
+  
+          $this->seed(Profiles::class);
+          $this->seed(InitialUser::class);
+ 
+         $user = User::factory()->create(['profile_id' => 2 , 'password'=> '12345678']);
+  
+          $response = $this->post('/api/login',[
+              'email' => 'eliana@gmail.com',
+              'password' => '1234567'
+          ]);
+  
+          $response->assertStatus(401);
+  
+          $response->assertJson([
+            "message" => "Não autorizado. Credenciais incorretas",
+            "status"=> 401,
+            ]
+        );      
+      }
 
 
 }
