@@ -55,3 +55,5 @@ Route::get('pets/{id}/adocao', [AdoptionController::class, 'show']);
 Route::post('login', [AuthController::class, 'store']);
 Route::post('pets/adocao', [AdoptionController::class, 'store']);
 Route::post('users', [UserController::class, 'store']);
+Route::post('upload', [AdoptionController::class, 'upload']);
+
