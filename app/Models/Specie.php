@@ -8,6 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Specie extends Model
 {
     use HasFactory;
-
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'created_at', "updated_at"];
 }
