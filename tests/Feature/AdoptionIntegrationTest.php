@@ -42,5 +42,22 @@ class AdoptionIntegrationTest extends TestCase
             ...$body,
             'status' => 'PENDENTE'
         ]);
+    }    
+
+    public function test_can_get_all_adocoes(): void
+    { 
+        $specie = Specie::factory()->create();
+        $race = Race::factory()->create();
+        $pet  = Pet::factory()->create(['race_id' => $race->id, 'specie_id' => $specie->id]);
+
+        Adoption::factory(10)->create(['pet_id' => $pet->id]);
+
+        $this->assertDatabaseCount('adoptions', 10);
+
+        $user = User::factory()->create(['profile_id' => 3, 'password' => '12345678']);
+
+        $response = $this->actingAs($user)->get('/api/adoptions');
+        $response->assertStatus(200);
+        
     }
 }
