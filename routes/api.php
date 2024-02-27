@@ -13,6 +13,11 @@ use App\Http\Controllers\VaccineController;
 use App\Http\Middleware\ValidateLimitStudentsToUser;
 use Illuminate\Support\Facades\Route;
 
+Route::get('pets/adocao', [AdoptionController::class, 'index']);
+Route::get('pets/{id}/adocao', [AdoptionController::class, 'show']);
+Route::post('login', [AuthController::class, 'store']);
+Route::post('pets/adocao', [AdoptionController::class, 'store']);
+
 Route::middleware('auth:sanctum')->group(function () {
 
     //Route::post('races', [RaceController::class, 'store'])->middleware(['ability:create-races']);
@@ -46,11 +51,18 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::get('pets/perfil', [PetsReportController::class, 'showPerfil']);
+
+    Route::get('adoptions', [AdoptionController::class, 'getAdoptions']);
+    Route::post('adoptions/realized', [AdoptionController::class, 'approve']);
 });
 
 
-
-Route::get('pets/adocao', [AdoptionController::class, 'index']);
-Route::get('pets/{id}', [AdoptionController::class, 'show']);
-Route::post('login', [AuthController::class, 'store']);
 Route::post('users', [UserController::class, 'store']);
+
+Route::post('upload', [AdoptionController::class, 'upload']);
+
+Route::post('import/peoples', [ImportPeoplesController::class, 'import']);
+
+
+
+
