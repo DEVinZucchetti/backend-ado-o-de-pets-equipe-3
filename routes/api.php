@@ -61,6 +61,8 @@ Route::post('users', [UserController::class, 'store']);
 
 Route::post('upload', [AdoptionController::class, 'upload']);
 
+Route::post('import/peoples', [ImportPeoplesController::class, 'import']);
+
 
 
 
